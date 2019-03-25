@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from loguru import logger
 from pyfiglet import Figlet
 from PyInquirer import prompt, print_json
+import sys
 
 class KaskusBot:
     def __init__(self,answer):
@@ -19,6 +20,9 @@ class KaskusBot:
         self.comment_bot()
     
     def login(self,username,password):
+        """
+        Fungsi login menggunakan POST ke server (baseurl)
+        """
         try:
             baseurl = "https://m.kaskus.co.id/user/login"
             data = {
@@ -26,18 +30,27 @@ class KaskusBot:
                 "password":password,
                 "url":"/user/login"
             }
+            # POST dengan Data
             self.session.post(baseurl, data=data)
+
+            # Memastikan apakah akun sudah terlogin atau belum.
             r = self.session.get('https://m.kaskus.co.id/user/editprofile')
-            
             soup = BeautifulSoup(r.content,'lxml')
             usr = soup.findAll('input')
+            if user[2]['value'] == "/user/login":
+                logger.warning('Login Gagal')
+                sys.exit()
+
             logger.success('Login berhasil (%s)'%(usr[2]['value']))
         except:
             logger.warning('Login Gagal!')
-            exit
+            sys.exit()
         
 
     def get_txt(self,txtfiles):
+        """
+        Mengambil isi file txt per baris
+        """
         raw_lines = []
         lines = []
 
@@ -46,15 +59,15 @@ class KaskusBot:
         f.close()
         
         for line in raw_lines:
-            lines.append(line.strip("\n"))
+            lines.append(line.strip("\n")) # Menghapus \n didalam string
 
         return lines
 
     def get_thread(self, namecategory, howmanypages=1):
         """
-        Get All Links from Category
+        Mengambil semua thread
         
-        example namecategory:
+        contoh parameter namecategory:
         /21/the-lounge/
         """
         
@@ -69,11 +82,12 @@ class KaskusBot:
             for thread in threads:
                 link = thread.findAll('a',class_="C(#484848) nightmode_C(#dcdcdc)")
                 if '<i class="fas fa-thumbtack C(#ed1c24) nightmode_C(#faa517) Mend(5px)"></i>' in str(link[1]):
-                    # Skip Pinned Post
+                    # Mengskip thread yang di pinned
                     continue
+                # Mengambil ID Thread dari URL Thread
                 rawlink = link[1]['href']
                 linkprocessed = rawlink.split('/')[2]
-                self.links.append(linkprocessed)
+                self.links.append(linkprocessed) # Menyimpan ID Thread ke Variabel
         logger.success('Sukses mengambil thread! Terdapat '+str(len(self.links))+' thread yang bisa di komen')
     
     def comment_bot(self,delay=30):
@@ -82,10 +96,13 @@ class KaskusBot:
         """
         terkomen = 0
         for link in self.links:
+            # Baseurl ditambahkan dengan ID Thread
             baseurl = "https://m.kaskus.co.id/post_reply/"+link
             r = self.session.get(baseurl)
+
             soup = BeautifulSoup(r.content,'lxml')
             try:
+                # Mengambil Security Token
                 token = soup.find('input',{'name':'psecuritytoken'})
                 token = token['value']
 
