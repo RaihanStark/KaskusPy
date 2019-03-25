@@ -20,11 +20,11 @@ python -m pip install -r requirements.txt
 Ikuti Instruksinya
 
 ## Algoritma
-1- Login kedalam website menggunakan Request POST langsung ke server
-2- Setelah login berhasil, bot ini langsung mengarah ke link kategori dan mengambil semua id thread selain pinned thread menggunakan Beautiful Soup dan menyimpannya kedalam sebuah variable
-3- pagenumber + 1. Untuk pindah ke page selanjutnya
-4- Setelah selesai _Scraping_, Bot ini akan mengambil securitytoken form menggunakan Beautiful Soup sebelum request POST ke server!
-5- Delay 30 detik dan kembali ke poin 4 sampai akhirnya tidak ada link lagi yang harus di pos
+- Login kedalam website menggunakan Request POST langsung ke server\n
+- Setelah login berhasil, bot ini langsung mengarah ke link kategori dan mengambil semua id thread selain pinned thread menggunakan Beautiful Soup dan menyimpannya kedalam sebuah variable
+- pagenumber + 1. Untuk pindah ke page selanjutnya
+- Setelah selesai _Scraping_, Bot ini akan mengambil securitytoken form menggunakan Beautiful Soup sebelum request POST ke server!
+- Delay 30 detik dan kembali ke poin 4 sampai akhirnya tidak ada link lagi yang harus di pos
 
 ## TODO
 - Iterate to ALL Thread on each category
